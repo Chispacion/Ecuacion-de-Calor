@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<title>Transferencia de calor en un teléfono móvil</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div><div class="grid" aria-hidden="true"></div>
+<div class="wrap">
+<header class="top">
+<svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#6a3df0"/><stop offset=".55" stop-color="#e0245e"/><stop offset="1" stop-color="#ff9a2e"/></linearGradient></defs><rect x="9" y="3" width="22" height="34" rx="6" fill="url(#lg)"/><rect x="12" y="7" width="16" height="26" rx="3" fill="#0d1020" opacity=".55"/><circle cx="20" cy="15" r="8" fill="#ffd27a" opacity=".25"/><circle cx="20" cy="15" r="4.5" fill="#ffd27a"/><path d="M14 27q3-3 6 0t6 0" stroke="#fff" stroke-width="1.6" fill="none" opacity=".85" stroke-linecap="round"/></svg>
+<div class="ttl"><b>Transferencia de calor en un teléfono móvil</b><span>Ecuación de calor 2D · simulación numérica</span></div>
+<div class="sp"></div>
+<div class="pill pill-processor"><i></i>Procesador <b id="hdC">--</b></div>
+<div class="pill pill-hand"><i></i>Mano <b id="hdH">--</b></div>
+<div class="pill"><span class="dot"></span>En vivo</div>
+<button class="thm" id="thm">Cambiar tema</button>
+</header>
+<div class="dash">
+<aside class="side"><section><h2>Parámetros de simulación</h2>
+<div class="controls">
+<div class="ctl"><label>Escenario de uso</label><select id="uso"><option value="1.5">Mensajería (1.5 W)</option><option value="3">Reproducción de video (3 W)</option><option value="5" selected>Videojuego (5 W)</option></select></div>
+<div class="ctl"><label>Potencia del procesador <b id="oP"></b></label><input type="range" id="P" min="0.5" max="10" step="0.5" value="5"></div>
+<div class="ctl"><label>Duración de uso <b id="oT"></b></label><input type="range" id="T" min="1" max="30" step="1" value="10"></div>
+<div class="ctl"><label>Temperatura ambiente <b id="oA"></b></label><input type="range" id="A" min="15" max="40" step="1" value="30"></div>
+<div class="ctl"><label>Reparto del calor en el material (k) <b id="oK"></b></label><input type="range" id="K" min="1" max="100" step="1" value="20"><div class="small">Qué tan bien reparte el calor el material. Alto (metal): lo esparce. Bajo (vidrio, plástico): lo deja concentrado.</div></div>
+<div class="ctl"><label>Grosor del teléfono <b id="oD"></b></label><input type="range" id="D" min="4" max="12" step="0.5" value="8"><div class="small">Un teléfono más grueso almacena más calor y se calienta más despacio.</div></div>
+<div class="ctl"><label>Enfriamiento por el aire (h) <b id="oHa"></b></label><input type="range" id="Ha" min="5" max="40" step="1" value="20"><div class="small">Cuánto calor se lleva el aire. Alto: con viento o ventilación. Bajo: en un bolsillo o un lugar cerrado.</div></div>
+<div class="ctl"><label>Enfriamiento por la mano (h) <b id="oHm"></b></label><input type="range" id="Hm" min="10" max="150" step="5" value="60"><div class="small">Cuánto calor absorbe la mano. Bajo: con funda gruesa o guante. Alto: con la piel directa.</div></div>
+</div></section></aside>
+<main class="main">
+<div class="tabs"><button class="tab on" data-t="tab1">Laboratorio</button><button class="tab" data-t="tab2">Cámara térmica en vivo</button><button class="tab" data-t="tab3">Modelo matemático</button></div>
+<div id="tab1">
+<section><h2>Resultados</h2>
+<div class="cards">
+<div class="card"><div class="l">Temperatura máxima del procesador</div><div class="v" id="c1"></div><div class="s" id="c1s"></div></div>
+<div class="card"><div class="l">Temperatura media, zona de la mano</div><div class="v" id="c2"></div><div class="s">superficie de agarre</div></div>
+<div class="card"><div class="l">Temperatura media del equipo</div><div class="v" id="c3"></div><div class="s">promedio de toda la superficie</div></div>
+<div class="card"><div class="l">Difusividad térmica</div><div class="v" id="c4"></div><div class="s" id="c4s"></div></div>
+</div>
+<div class="alert" id="alert"><b>Advertencia.</b> La temperatura de la zona de agarre supera 41 °C, valor a partir del cual el contacto prolongado resulta incómodo.</div>
+</section>
+<div class="tline"><button class="btn" id="tpl">Reproducir</button>
+<div class="ctl timeline-control"><label>Instante de simulación <b id="oS"></b></label><input type="range" id="S" min="0" max="59" step="1" value="59"></div>
+<span class="small tl-hint">Mueva el tiempo: el teléfono, la mano y las gráficas cambian juntos.</span></div>
+<section><div class="stage">
+<div><h2>Distribución espacial de la temperatura</h2>
+<canvas id="heat" class="heat-canvas"></canvas>
+<p class="small">El rectángulo es el teléfono visto por detrás, en horizontal (15 × 7 cm). Cada color es la temperatura de ese punto: oscuro es frío y claro es caliente. El cuadro cian es el procesador y la línea verde discontinua marca dónde está la mano.</p></div>
+<div><h2>Interacción con la mano</h2>
+<div id="hsvg" class="hwrap"></div>
+<div class="card hand-result"><div class="l">Temperatura máxima en la zona de contacto</div><div class="v" id="hT"></div><div class="s" id="hS"></div></div>
+<div class="gauge"><div class="mk" id="mk"></div><span class="gauge-30">30 °C</span><span class="gauge-41">41</span><span class="gauge-43">43</span><span class="gauge-48">48</span><span class="gauge-55">55 °C</span></div>
+<div class="lvl" id="hLv"></div>
+<p id="hDs" class="hand-description"></p>
+<p class="small">Referencia aproximada: incomodidad desde unos 41 °C, dolor entre 43 y 45 °C y riesgo de quemadura por encima de unos 48 °C. Modelo didáctico, no sustituye criterios médicos.</p></div>
+</div></section>
+<section><h2>Evolución temporal y perfil longitudinal</h2>
+<div class="grid2"><canvas id="ts" class="chart-canvas"></canvas><canvas id="pf" class="chart-canvas"></canvas></div></section>
+</div>
+<div id="tab2" hidden><section><h2>Cámara térmica en tiempo real</h2>
+<p class="note">Simulación animada del teléfono. Haga clic y arrastre sobre el equipo para aplicar calor o hielo, y pase el cursor para leer la temperatura de cualquier punto. Active la reducción de potencia para ver cómo un teléfono real se protege: cuando el procesador supera unos 48 °C, el sistema limita su potencia y el equipo deja de calentarse. Los parámetros de la parte superior se aplican a esta simulación.</p>
+<div class="tools">
+<button class="btn" id="lpl">Pausar</button><button class="btn" id="lre">Reiniciar</button>
+<button class="btn on" id="lhe">Aplicar calor</button><button class="btn" id="lic">Aplicar hielo</button>
+<label><input type="checkbox" id="lth" checked> Reducción de potencia (throttling)</label>
+<label>Velocidad <input type="range" id="lsp" class="live-speed" min="5" max="120" step="5" value="40"> <b id="lspo">40x</b></label></div>
+<canvas id="live" class="live-canvas"></canvas>
+<div class="cards live-cards">
+<div class="card"><div class="l">Tiempo simulado</div><div class="v" id="lt"></div></div>
+<div class="card"><div class="l">Procesador</div><div class="v" id="lc"></div><div class="s" id="le"></div></div>
+<div class="card"><div class="l">Zona de la mano</div><div class="v" id="lh"></div><div class="s" id="ll"></div></div></div>
+</section></div>
+<div id="tab3" hidden><section><h2>Modelo matemático</h2>
+<p>El teléfono se modela como una placa delgada con la temperatura promediada en el espesor. La temperatura T(x, y, t) satisface una ecuación diferencial parcial de segundo orden, lineal, no homogénea y de tipo parabólico:</p>
+<div class="eq">ρ·c<sub>p</sub>·d · ∂T/∂t = k·d·(∂²T/∂x² + ∂²T/∂y²) + q(x, y) − h(x, y)·(T − T<sub>amb</sub>)</div>
+<div class="tw"><table><tr><th>Término</th><th>Significado físico</th></tr>
+<tr><td>ρ·c<sub>p</sub>·d · ∂T/∂t</td><td>Almacenamiento de energía térmica por unidad de área</td></tr>
+<tr><td>k·d·∇²T</td><td>Conducción de calor dentro del equipo</td></tr>
+<tr><td>q(x, y)</td><td>Calor generado por el procesador, en W/m²</td></tr>
+<tr><td>h(x, y)·(T − T<sub>amb</sub>)</td><td>Pérdida de calor hacia el entorno. h es el coeficiente de enfriamiento: cuánto calor se lleva el aire o la mano por cada grado de diferencia</td></tr></table></div>
+<p><b>Condiciones.</b> Inicial: T(x, y, 0) = T<sub>amb</sub>. Frontera: bordes aislados, ∂T/∂n = 0.</p>
+<p><b>Método numérico.</b> Diferencias finitas explícitas (FTCS) sobre una malla de Δx = 2 mm. La estabilidad exige Δt ≤ Δx² / (4α), con α = k / (ρ·c<sub>p</sub>).</p>
+<p><b>Supuestos.</b> Placa de 15 × 7 cm con ρ = 2500 kg/m³ y c<sub>p</sub> = 900 J/kg·K efectivos; única fuente de calor: el procesador (cuadro de 1.4 cm); no se modelan la batería, la pantalla como capa independiente ni la reducción de frecuencia del procesador. Los valores son didácticos, no mediciones de un equipo real.</p>
+</section></div>
+</main></div></div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
