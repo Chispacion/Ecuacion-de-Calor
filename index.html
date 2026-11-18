@@ -74,17 +74,51 @@
 <div class="card"><div class="l">Procesador</div><div class="v" id="lc"></div><div class="s" id="le"></div></div>
 <div class="card"><div class="l">Zona de la mano</div><div class="v" id="lh"></div><div class="s" id="ll"></div></div></div>
 </section></div>
-<div id="tab3" hidden><section><h2>Modelo matemático</h2>
-<p>El teléfono se modela como una placa delgada con la temperatura promediada en el espesor. La temperatura T(x, y, t) satisface una ecuación diferencial parcial de segundo orden, lineal, no homogénea y de tipo parabólico:</p>
-<div class="eq">ρ·c<sub>p</sub>·d · ∂T/∂t = k·d·(∂²T/∂x² + ∂²T/∂y²) + q(x, y) − h(x, y)·(T − T<sub>amb</sub>)</div>
-<div class="tw"><table><tr><th>Término</th><th>Significado físico</th></tr>
-<tr><td>ρ·c<sub>p</sub>·d · ∂T/∂t</td><td>Almacenamiento de energía térmica por unidad de área</td></tr>
-<tr><td>k·d·∇²T</td><td>Conducción de calor dentro del equipo</td></tr>
-<tr><td>q(x, y)</td><td>Calor generado por el procesador, en W/m²</td></tr>
-<tr><td>h(x, y)·(T − T<sub>amb</sub>)</td><td>Pérdida de calor hacia el entorno. h es el coeficiente de enfriamiento: cuánto calor se lleva el aire o la mano por cada grado de diferencia</td></tr></table></div>
-<p><b>Condiciones.</b> Inicial: T(x, y, 0) = T<sub>amb</sub>. Frontera: bordes aislados, ∂T/∂n = 0.</p>
-<p><b>Método numérico.</b> Diferencias finitas explícitas (FTCS) sobre una malla de Δx = 2 mm. La estabilidad exige Δt ≤ Δx² / (4α), con α = k / (ρ·c<sub>p</sub>).</p>
-<p><b>Supuestos.</b> Placa de 15 × 7 cm con ρ = 2500 kg/m³ y c<sub>p</sub> = 900 J/kg·K efectivos; única fuente de calor: el procesador (cuadro de 1.4 cm); no se modelan la batería, la pantalla como capa independiente ni la reducción de frecuencia del procesador. Los valores son didácticos, no mediciones de un equipo real.</p>
+<div id="tab3" hidden><section class="model-section"><h2>Modelo matemático</h2>
+<h3 class="model-subtitle">Modelo de dos cuerpos: celular y mano</h3>
+<div class="model-diagram" role="img" aria-label="El teléfono celular y la mano humana intercambian calor mediante una conductancia térmica G">
+<div class="model-object">
+<span class="model-object-label">Teléfono<br>celular</span>
+<svg class="model-phone" viewBox="0 0 72 128" aria-hidden="true">
+<rect x="4" y="2" width="64" height="124" rx="12" fill="#111827" stroke="#64748b" stroke-width="2"/>
+<rect x="11" y="12" width="50" height="98" rx="5" fill="#e8edf5"/>
+<rect x="29" y="6" width="14" height="2.5" rx="1.25" fill="#64748b"/>
+<circle cx="36" cy="118" r="4" fill="#64748b"/>
+</svg>
+</div>
+<div class="model-exchange">
+<span>Intercambio<br>térmico (G)</span>
+<svg viewBox="0 0 150 56" aria-hidden="true">
+<defs><linearGradient id="heat-flow" x1="0" x2="1"><stop stop-color="#f34b62"/><stop offset=".48" stop-color="#f34b62"/><stop offset=".52" stop-color="#45a7ec"/><stop offset="1" stop-color="#45a7ec"/></linearGradient></defs>
+<path d="M0 28 34 3v17h82V3l34 25-34 25V36H34v17z" fill="url(#heat-flow)"/>
+</svg>
+</div>
+<div class="model-object">
+<img class="model-hand" src="images/model-hand.png" alt="">
+<span class="model-object-label">Mano humana</span>
+</div>
+</div>
+<div class="model-equations">
+<div class="model-equation" aria-label="Capacidad térmica del celular por derivada de la temperatura del celular respecto al tiempo, igual a menos G por la diferencia entre la temperatura del celular y la temperatura de la mano">
+<span>C<sub>c</sub></span><span class="model-fraction"><span>dT<sub>c</sub></span><span>dt</span></span><span>= −G (T<sub>c</sub> − T<sub>p</sub>)</span>
+</div>
+<div class="model-equation" aria-label="Capacidad térmica de la mano por derivada de su temperatura respecto al tiempo, igual a G por la diferencia entre la temperatura del celular y la temperatura de la mano">
+<span>C<sub>p</sub></span><span class="model-fraction"><span>dT<sub>p</sub></span><span>dt</span></span><span>= G (T<sub>c</sub> − T<sub>p</sub>)</span>
+</div>
+</div>
+<div class="model-definitions">
+<div><h3>Variables</h3><dl>
+<div><dt>T<sub>c</sub></dt><dd>Temperatura del celular</dd></div>
+<div><dt>T<sub>p</sub></dt><dd>Temperatura de la mano</dd></div>
+<div><dt>t</dt><dd>Tiempo</dd></div>
+</dl></div>
+<div><h3>Parámetros</h3><dl>
+<div><dt>C<sub>c</sub></dt><dd>Capacidad térmica del celular</dd></div>
+<div><dt>C<sub>p</sub></dt><dd>Capacidad térmica de la mano</dd></div>
+<div><dt>G</dt><dd>Conductancia térmica</dd></div>
+</dl></div>
+</div>
+<p class="model-note">Este modelo de dos cuerpos representa el equilibrio térmico sin pérdidas externas ni generación interna, mostrando cómo evolucionan las temperaturas.</p>
 </section></div>
 </main></div></div>
 
